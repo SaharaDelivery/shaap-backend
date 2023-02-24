@@ -4,7 +4,7 @@
   "description": "The API for the GrandGale Food Delivery App",
   "main": "index.js",
   "scripts": {
-    "postinstall": "py manage.py collectstatic --noinput"
+    "postinstall": "python3 manage.py collectstatic --noinput"
   },
   "author": "",
   "license": "ISC"
