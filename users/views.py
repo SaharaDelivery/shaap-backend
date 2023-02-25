@@ -44,3 +44,10 @@ class LoginApi(APIView):
             login_user(user=user)
             return Response(data={"token": token}, status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=data.errors)
+
+
+class LogoutApi(APIView):
+    def post(self, request):
+        # deletes all the tokens the user has
+        request.user.auth_token_set.all().delete()
+        return Response(status=status.HTTP_200_OK)
