@@ -20,6 +20,9 @@ class SignUpApi(APIView):
         email = serializers.EmailField(
             validators=[UniqueValidator(queryset=CustomUser.objects.all())]
         )
+        first_name = serializers.CharField()
+        last_name = serializers.CharField()
+        phone_number = serializers.CharField()
         password = serializers.CharField()
 
     def post(self, request):
