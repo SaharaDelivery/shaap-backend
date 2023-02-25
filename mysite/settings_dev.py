@@ -1,3 +1,4 @@
+from datetime import timedelta
 import os
 from pathlib import Path
 
@@ -29,7 +30,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
     "corsheaders",
+    "knox",
     "users",
 ]
 
@@ -131,3 +134,20 @@ CORS_ALLOW_METHODS = [
     "PUT",
     "DELETE",
 ]
+
+# Django Rest Framework Settings
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
+}
+
+# Django REST KNOX
+REST_KNOX = {
+    "SECURE_HASH_ALGORITHM": "cryptography.hazmat.primitives.hashes.SHA512",
+    "AUTH_TOKEN_CHARACTER_LENGTH": 64,
+    "TOKEN_TTL": timedelta(hours=48),
+    "USER_SERIALIZER": "knox.serializers.UserSerializer",
+    "TOKEN_LIMIT_PER_USER": None,
+    "AUTO_REFRESH": True,
+    "AUTH_HEADER_PREFIX": "Token",
+    "EXPIRY_DATETIME_FORMAT": "iso-8601",
+}
