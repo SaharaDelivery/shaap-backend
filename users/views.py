@@ -3,6 +3,7 @@ from django.shortcuts import render
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.validators import UniqueValidator
 from users.authtoken_serializer import AuthTokenSerializer
 
@@ -10,6 +11,7 @@ from knox.models import AuthToken
 
 from users.models import CustomUser
 from users.services import create_user, login_user
+from utils.serializer_utils import inline_serializer
 
 
 class SignUpApi(APIView):
@@ -31,6 +33,25 @@ class SignUpApi(APIView):
             create_user(data=data.data)
             return Response(status=status.HTTP_201_CREATED)
         return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class GetProfileApi(APIView):
+    permission_classes = [IsAuthenticated]
+
+    class OutputSerializer(serializers.Serializer):
+        first_name = serializers.CharField()
+        last_name = serializers.CharField()
+        username = serializers.CharField()
+        email = serializers.EmailField()
+        phone_number = serializers.CharField()
+        # adresses = inline_serializer(fields={})
+
+    def get(self, request):
+        try:
+            data = self.OutputSerializer(request.user)
+            return Response(data=data.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST, data=e)
 
 
 class LoginApi(APIView):
