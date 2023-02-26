@@ -1,14 +1,14 @@
 from django.urls import path
 
-from users.views import EditProfileApi, GetProfileApi, LoginApi, LogoutApi, SignUpApi
+from users.views import DisableUserAccountApi, EditUserAccountApi, GetUserAccountApi, LoginApi, LogoutApi, RegisterUserApi
 
 urlpatterns = [
-    path("signup/", SignUpApi.as_view(), name="signup"),
-    path("get-profile/", GetProfileApi.as_view(), name="get-profile"),
-    path("edit-profile/", EditProfileApi.as_view(), name="edit-profile"),
+    path("register/", RegisterUserApi.as_view(), name="signup"),
+    path("get-account/", GetUserAccountApi.as_view(), name="get-profile"),
+    path("edit-account/", EditUserAccountApi.as_view(), name="edit-profile"),
+    path("disable-account/", DisableUserAccountApi.as_view(), name="disable-account"),
     #########
     #########
-    # path("delete-account/", DeleteAccountApi.as_view(), name="delete-account"),
     # path("verify-email/", VerifyEmailApi.as_view(), name="verify-email"),
     # path("forgot-password/", ForgotPasswordApi.as_view(), name="forgot-password"),
     # path("change-password/", ChangePasswordApi.as_view(), name="change-password"),

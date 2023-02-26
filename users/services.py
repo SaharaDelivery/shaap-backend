@@ -16,10 +16,20 @@ def create_user(data: dict) -> CustomUser:
 
 
 @transaction.atomic
-def edit_user_profile(user: CustomUser, data: dict) -> None:
+def edit_user_account(user: CustomUser, data: dict) -> None:
     try:
         for key, value in data.items():
             setattr(user, key, value)
+        user.full_clean()
+        user.save()
+    except django_exceptions.ValidationError as e:
+        raise rest_exceptions.ValidationError(e)
+
+
+@transaction.atomic
+def disable_user_account(user: CustomUser) -> None:
+    try:
+        user.is_active = False
         user.full_clean()
         user.save()
     except django_exceptions.ValidationError as e:

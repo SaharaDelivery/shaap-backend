@@ -10,11 +10,16 @@ from users.authtoken_serializer import AuthTokenSerializer
 from knox.models import AuthToken
 
 from users.models import CustomUser
-from users.services import create_user, edit_user_profile, login_user
+from users.services import (
+    create_user,
+    disable_user_account,
+    edit_user_account,
+    login_user,
+)
 from utils.serializer_utils import inline_serializer
 
 
-class SignUpApi(APIView):
+class RegisterUserApi(APIView):
     class InputSerializer(serializers.Serializer):
         username = serializers.CharField(
             validators=[UniqueValidator(queryset=CustomUser.objects.all())]
@@ -35,7 +40,7 @@ class SignUpApi(APIView):
         return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class GetProfileApi(APIView):
+class GetUserAccountApi(APIView):
     permission_classes = [IsAuthenticated]
 
     class OutputSerializer(serializers.Serializer):
@@ -54,7 +59,7 @@ class GetProfileApi(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST, data=e)
 
 
-class EditProfileApi(APIView):
+class EditUserAccountApi(APIView):
     permission_classes = [IsAuthenticated]
 
     class InputSerializer(serializers.Serializer):
@@ -73,9 +78,17 @@ class EditProfileApi(APIView):
     def put(self, request):
         data = self.InputSerializer(data=request.data)
         if data.is_valid(raise_exception=True):
-            edit_user_profile(user=request.user, data=data.data)
+            edit_user_account(user=request.user, data=data.data)
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=data.errors)
+
+
+class DisableUserAccountApi(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request):
+        disable_user_account(user=request.user)
+        return Response(status=status.HTTP_200_OK)
 
 
 class LoginApi(APIView):
