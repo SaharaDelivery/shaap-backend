@@ -9,14 +9,20 @@ from users.models import CustomUser
 
 @transaction.atomic
 def create_user(data: dict) -> CustomUser:
-    user = CustomUser(**data)
-    user.set_password(data["password"])
-    user.full_clean()
-    user.save()
+    try:
+        user = CustomUser(**data)
+        user.set_password(data["password"])
+        user.full_clean()
+        user.save()
+    except django_exceptions.ValidationError as e:
+        raise rest_exceptions.ValidationError(e)
+
+    else:
+        return user
 
 
 @transaction.atomic
-def edit_user_account(user: CustomUser, data: dict) -> None:
+def edit_user_account(user: CustomUser, data: dict) -> CustomUser:
     try:
         for key, value in data.items():
             setattr(user, key, value)
@@ -24,6 +30,22 @@ def edit_user_account(user: CustomUser, data: dict) -> None:
         user.save()
     except django_exceptions.ValidationError as e:
         raise rest_exceptions.ValidationError(e)
+
+    else:
+        return user
+
+
+@transaction.atomic
+def login_user(user: CustomUser) -> None:
+    try:
+        user.last_login = timezone.now()
+        user.full_clean()
+        user.save()
+    except django_exceptions.ValidationError as e:
+        raise rest_exceptions.ValidationError(e)
+
+    else:
+        return user
 
 
 @transaction.atomic
@@ -35,8 +57,5 @@ def disable_user_account(user: CustomUser) -> None:
     except django_exceptions.ValidationError as e:
         raise rest_exceptions.ValidationError(e)
 
-
-def login_user(user: CustomUser) -> None:
-    user.last_login = timezone.now()
-    user.full_clean()
-    user.save()
+    else:
+        return user
