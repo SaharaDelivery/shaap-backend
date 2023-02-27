@@ -1,0 +1,9 @@
+{
+    "recommendations": [
+        "njpwerner.autodocstring",
+        "ms-python.black-formatter",
+        "github.vscode-pull-request-github",
+        "ms-python.isort",
+        "qwtel.sqlite-viewer"
+    ]
+}
