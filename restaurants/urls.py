@@ -1,14 +1,49 @@
 from django.urls import path
 
-from restaurants.views import RegisterRestaurantApi
+from restaurants.apis import (
+    ArchiveRestaurantApi,
+    EditRestaurantInfoApi,
+    GetAllFilteredRestaurantsApi,
+    GetAllRestaurantsApi,
+    GetRestaurantInfoApi,
+    RegisterRestaurantApi,
+    RestaurantStaffLoginApi,
+    RestaurantStaffLogoutApi,
+)
 
 urlpatterns = [
     path("register/", RegisterRestaurantApi.as_view(), name="register-restaurant"),
-    # path("get/", GetRestaurantInfoApi.as_view(), name="get-restaurant-info"),
-    # path("get/all/", GetAllRestaurantsApi.as_view(), name="get-all-restaurants"),
-    # path("get/filtered/", GetAllFilteredRestaurantsApi.as_view(), name="get-all-filtered-restaurants"),
-    # path("edit/", EditRestaurantInfoApi.as_view(), name="edit-restaurant-info"),
-    # path("delete/", DisableRestaurantApi.as_view(), name="disable-restaurant"),
+    path("get/<int:id>/", GetRestaurantInfoApi.as_view(), name="get-restaurant-info"),
+    path("get/all/", GetAllRestaurantsApi.as_view(), name="get-all-restaurants"),
+    # path(
+    #     "get/filter/",
+    #     GetAllFilteredRestaurantsApi.as_view(),
+    #     name="get-all-filtered-restaurants",
+    # ),
+    path(
+        "edit/<int:id>/", EditRestaurantInfoApi.as_view(), name="edit-restaurant-info"
+    ),
+    path(
+        "disable/<int:id>/", ArchiveRestaurantApi.as_view(), name="disable-restaurant"
+    ),
+    # ####
+    # ####
+    path(
+        "staff/login/", RestaurantStaffLoginApi.as_view(), name="restaurant-staff-login"
+    ),
+    path(
+        "staff/logout/",
+        RestaurantStaffLogoutApi.as_view(),
+        name="restaurant-staff-logout",
+    ),
+    # path("pending/orders/", GetPendingOrdersApi.as_view(), name="get-pending-orders"),
+    # path("pending/orders/accept/", AcceptPendingOrderApi.as_view(), name="accept-pending-order"),
+    # path("update/order/status/", UpdateOrderStatusApi.as_view(), name="update-order-status"),
+    # path("completed/orders/", GetCompletedOrdersApi.as_view(), name="get-completed-orders"),
+    # path("orders/all/", GetAllRestaurantOrdersApi.as_view(), name="get-all-orders"),
+    # path("profile/views/", GetRestaurantProfileViewsApi.as_view(), name="get-restaurant-profile-views"),
+    # path("revenue/", GetRestaurantRevenueApi.as_view(), name="get-restaurant-revenue"),
+    # path("revenue/withdraw/", WithdrawRestaurantRevenueApi.as_view(), name="withdraw-restaurant-revenue"),
     # ####
     # ####
     # path("create/menu/", CreateRestaurantMenuApi.as_view(), name="create-restaurant-menu"),

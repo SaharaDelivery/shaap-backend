@@ -1,8 +1,11 @@
 from django.contrib import admin
 
-from restaurants.models import Cuisine, Menu, MenuItem, Restaurant
+from simple_history.admin import SimpleHistoryAdmin
 
-admin.site.register(Restaurant)
-admin.site.register(Cuisine)
-admin.site.register(Menu)
-admin.site.register(MenuItem)
+from restaurants.models import Cuisine, Menu, MenuItem, Restaurant, RestaurantStaff
+
+admin.site.register(RestaurantStaff, SimpleHistoryAdmin)
+admin.site.register(Restaurant, SimpleHistoryAdmin)
+admin.site.register(Cuisine, SimpleHistoryAdmin)
+admin.site.register(Menu, SimpleHistoryAdmin)
+admin.site.register(MenuItem, SimpleHistoryAdmin)
