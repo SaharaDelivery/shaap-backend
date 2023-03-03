@@ -1,10 +1,11 @@
+import uuid
 from django.db import models
-
-from rest_framework import exceptions as rest_exceptions
 
 from simple_history.models import HistoricalRecords
 
 from users.models import CustomUser
+
+from common.choices import ORDER_STATUS
 
 
 class Restaurant(models.Model):
@@ -57,6 +58,7 @@ class Menu(models.Model):
     description = models.TextField()
     cuisine = models.ForeignKey(Cuisine, on_delete=models.CASCADE, default=1)
     is_active = models.BooleanField(default=True)
+    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     history = HistoricalRecords()
 
     def __str__(self) -> str:
@@ -74,3 +76,16 @@ class MenuItem(models.Model):
 
     def __str__(self) -> str:
         return f"{self.name} | {str(self.price)} | {self.menu.name} | {self.menu.restaurant.name}"
+
+
+class Order(models.Model):
+    order_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    Restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=ORDER_STATUS, default="PENDING")
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
+    paid = models.BooleanField(default=False)
+    date_created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"OrderID: {self.user.email}"

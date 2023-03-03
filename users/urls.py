@@ -1,6 +1,14 @@
 from django.urls import path
 
-from users.apis import DisableUserAccountApi, EditUserAccountApi, GetUserAccountApi, LoginApi, LogoutApi, RegisterUserApi
+from users.apis import (
+    DisableUserAccountApi,
+    EditUserAccountApi,
+    GetUserAccountApi,
+    LoginApi,
+    LogoutApi,
+    RegisterUserApi,
+)
+from users.order_apis import PlaceOrderApi
 
 urlpatterns = [
     path("register/", RegisterUserApi.as_view(), name="signup"),
@@ -14,7 +22,7 @@ urlpatterns = [
     # path("change-password/", ChangePasswordApi.as_view(), name="change-password"),
     #######
     #######
-    # path("place-order/", PlaceOrderApi.as_view(), name="place-order"),
+    path("place-order/", PlaceOrderApi.as_view(), name="place-order"),
     # path("edit-order/", EditOrderApi.as_view(), name="edit-order"),
     # path("add-to-order/", AddToOrderApi.as_view(), name="add-to-cart"),
     # path("edit-order-item/", EditOrderItemApi.as_view(), name="edit-cart-item"),

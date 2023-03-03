@@ -4,7 +4,7 @@ from django.core import exceptions as django_exceptions
 
 from rest_framework import exceptions as rest_exceptions
 
-from restaurants.models import Restaurant, RestaurantStaff
+from restaurants.models import Cuisine, Menu, Restaurant, RestaurantStaff
 from users.models import CustomUser
 
 
@@ -93,3 +93,97 @@ def login_restaurant_staff(user: CustomUser) -> CustomUser:
         obj.save()
     except django_exceptions.ValidationError as e:
         raise rest_exceptions.ValidationError(e)
+
+
+@transaction.atomic
+def create_menu(data: dict, creator: CustomUser) -> Menu:
+    """This function creates a menu
+
+    Args:
+        data (dict): a dictionary containing the details of the menu
+        creator (CustomUser): The creator of the menu
+
+    Returns:
+        Menu: The created menu obj
+    """
+    try:
+        restaurant = Restaurant.objects.get(id=data.pop("restaurant"))
+        cuisine = Cuisine.objects.get(id=data.pop("cuisine"))
+        obj = Menu(restaurant=restaurant, cuisine=cuisine, **data)
+        obj.creator = creator
+        obj.full_clean()
+        obj.save()
+    except django_exceptions.ValidationError as e:
+        raise rest_exceptions.ValidationError(e)
+
+    else:
+        return obj
+
+
+@transaction.atomic
+def update_restaurant_menu(id: int, data: dict) -> Menu:
+    """This function updates the restaurant menu
+
+    Args:
+        id (int): The ID of the menu
+        data (dict): The details of the menu that you want to update
+
+    Returns:
+        Menu: The updated menu obj
+    """
+    menu = Menu.objects.get(id=id)
+    try:
+        for key, value in data.items():
+            if key == "cuisine":
+                value = Cuisine.objects.get(id=value)
+            setattr(menu, key, value)
+        menu.full_clean()
+        menu.save()
+    except django_exceptions.ValidationError as e:
+        raise rest_exceptions.ValidationError(e)
+
+
+@transaction.atomic
+def archive_menu(id: int) -> Menu:
+    """This function archives a menu
+
+    Args:
+        id (int): The id of the menu
+
+    Returns:
+        Menu: The archived menu obj
+    """
+    try:
+        obj = Menu.objects.get(id=id)
+    except Menu.DoesNotExist as e:
+        raise rest_exceptions.NotFound(e)
+
+    try:
+        obj.is_active = False
+        obj.full_clean()
+        obj.save()
+    except django_exceptions.ValidationError as e:
+        raise rest_exceptions.ValidationError(e)
+
+    return obj
+
+
+@transaction.atomic
+def delete_menu(id: int) -> None:
+    """This function deletes a menu
+
+    Args:
+        id (int): The id of the menu
+
+    Returns:
+        None
+    """
+    try:
+        obj = Menu.objects.get(id=id)
+    except Menu.DoesNotExist as e:
+        raise rest_exceptions.NotFound(e)
+
+    else:
+        obj.delete()
+
+    return None

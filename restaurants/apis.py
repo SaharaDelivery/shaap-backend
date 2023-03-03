@@ -5,13 +5,23 @@ from rest_framework.validators import UniqueValidator
 
 from knox.models import AuthToken
 
-from restaurants.models import Restaurant
-from restaurants.selectors import get_all_restaurants, get_restaurant_info
+from restaurants.models import Cuisine, Restaurant
+from restaurants.selectors import (
+    get_archived_restaurant_menus,
+    get_all_restaurant_menus,
+    get_all_restaurants,
+    get_restaurant_info,
+    get_restaurant_menu_details,
+)
 from restaurants.services import (
+    archive_menu,
+    create_menu,
+    delete_menu,
     disable_restaurant,
     login_restaurant_staff,
     register_restaurant,
     update_restaurant_info,
+    update_restaurant_menu,
 )
 
 from utils.authtoken_serializer import AuthTokenSerializer
@@ -112,6 +122,94 @@ class ArchiveRestaurantApi(APIView):
     def put(self, request, id):
         disable_restaurant(id=id)
         return Response(status=status.HTTP_200_OK)
+
+
+class CreateRestaurantMenuApi(APIView):
+    class InputSerializer(serializers.Serializer):
+        restaurant = serializers.PrimaryKeyRelatedField(
+            queryset=Restaurant.objects.all()
+        )
+        name = serializers.CharField()
+        description = serializers.CharField()
+        cuisine = serializers.PrimaryKeyRelatedField(queryset=Cuisine.objects.all())
+
+    def post(self, request):
+        data = self.InputSerializer(data=request.data)
+        if data.is_valid(raise_exception=True):
+            create_menu(data=data.data, creator=request.user)
+            return Response(status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=data.errors)
+
+
+class GetRestaurantMenuDetailsApi(APIView):
+    class OutputSerializer(serializers.Serializer):
+        restaurant = inline_serializer(fields={"name": serializers.CharField()})
+        name = serializers.CharField()
+        description = serializers.CharField()
+        cuisine = inline_serializer(fields={"name": serializers.CharField()})
+
+    def get(self, request, menu_id):
+        menu = get_restaurant_menu_details(id=menu_id)
+        data = self.OutputSerializer(menu)
+        return Response(status=status.HTTP_200_OK, data=data.data)
+
+
+class GetAllRestaurantMenusApi(APIView):
+    class OutputSerializer(serializers.Serializer):
+        name = serializers.CharField()
+        cuisine = inline_serializer(fields={"name": serializers.CharField()})
+
+    def get(self, request, restaurant_id):
+        menus = get_all_restaurant_menus(restaurant_id=restaurant_id)
+        data = self.OutputSerializer(menus, many=True)
+        return Response(status=status.HTTP_200_OK, data=data.data)
+
+
+class GetArchivedRestaurantMenusApi(APIView):
+    permission_classes = [IsRestaurantAdmin]
+
+    class OutputSerializer(serializers.Serializer):
+        name = serializers.CharField()
+        cuisine = inline_serializer(fields={"name": serializers.CharField()})
+
+    def get(self, request, restaurant_id):
+        menus = get_archived_restaurant_menus(restaurant_id=restaurant_id)
+        data = self.OutputSerializer(menus, many=True)
+        return Response(status=status.HTTP_200_OK, data=data.data)
+
+
+class ArchiveRestaurantMenuApi(APIView):
+    permission_classes = [IsRestaurantAdmin]
+
+    def put(self, request, menu_id):
+        archive_menu(id=menu_id)
+        return Response(status=status.HTTP_200_OK)
+
+
+class DeleteRestaurantMenuApi(APIView):
+    permission_classes = [IsRestaurantAdmin]
+
+    def delete(self, request, menu_id):
+        delete_menu(id=menu_id)
+        return Response(status=status.HTTP_200_OK)
+
+
+class EditRestaurantMenuApi(APIView):
+    permission_classes = [IsRestaurantAdmin]
+
+    class InputSerializer(serializers.Serializer):
+        name = serializers.CharField(required=False)
+        description = serializers.CharField(required=False)
+        cuisine = serializers.PrimaryKeyRelatedField(
+            queryset=Cuisine.objects.all(), required=False
+        )
+
+    def put(self, request, menu_id):
+        data = self.InputSerializer(data=request.data)
+        if data.is_valid(raise_exception=True):
+            update_restaurant_menu(id=menu_id, data=data.data)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=data.errors)
 
 
 class RestaurantStaffLoginApi(APIView):
