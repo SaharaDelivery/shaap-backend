@@ -24,7 +24,10 @@ class IsRestaurantAdmin(BasePermission):
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             raise rest_exceptions.NotAuthenticated("User is not authenticated")
-        obj = RestaurantStaff.objects.get(user=request.user)
+        try:
+            obj = RestaurantStaff.objects.get(user=request.user)
+        except RestaurantStaff.DoesNotExist:
+            raise rest_exceptions.PermissionDenied("User is not a restaurant admin")
         try:
             return bool(request.user and obj.is_restaurant_admin)
         except AttributeError as e:
