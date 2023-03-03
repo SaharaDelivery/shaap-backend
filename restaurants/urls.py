@@ -3,16 +3,22 @@ from django.urls import path
 from restaurants.apis import (
     ArchiveRestaurantApi,
     ArchiveRestaurantMenuApi,
+    ArchiveRestaurantMenuItemApi,
     CreateRestaurantMenuApi,
+    CreateRestaurantMenuItemApi,
     DeleteRestaurantMenuApi,
+    DeleteRestaurantMenuItemApi,
     EditRestaurantInfoApi,
     EditRestaurantMenuApi,
+    EditRestaurantMenuItem,
+    GetAllRestaurantMenuItemsApi,
     GetArchivedRestaurantMenusApi,
     GetAllFilteredRestaurantsApi,
     GetAllRestaurantMenusApi,
     GetAllRestaurantsApi,
     GetRestaurantInfoApi,
     GetRestaurantMenuDetailsApi,
+    GetRestaurantMenuItemInfo,
     RegisterRestaurantApi,
     RestaurantStaffLoginApi,
     RestaurantStaffLogoutApi,
@@ -90,12 +96,34 @@ urlpatterns = [
     ),
     # ####
     # ####
-    # path("create/menu/item/", CreateRestaurantMenuItemApi.as_view(), name="create-restaurant-menu-item"),
-    # path("get/menu/item/", GetRestaurantMenuItemInfo.as_view(), name="get-restaurant-menu-item-info"),
-    # path("get/menu/items/all/", GetAllRestaurantMenuItemsApi.as_view(), name="get-restaurant-menu-items"),
-    # path("menu/item/edit/", EditRestaurantMenuItem.as_view(), name="edit-restaurant-menu-item"),
-    # path("menu/item/archive/", ArchiveRestaurantMenuItemApi.as_view(), name="archive-restaurant-menu-item"),
-    # path("menu/item/delete/", DeleteRestaurantMenuItemApi.as_view(), name="delete-restaurant-menu-item"),
-    ####
-    ####
+    path(
+        "menu/item/create/",
+        CreateRestaurantMenuItemApi.as_view(),
+        name="create-restaurant-menu-item",
+    ),
+    path(
+        "menu/item/get/<int:menu_item_id>/",
+        GetRestaurantMenuItemInfo.as_view(),
+        name="get-restaurant-menu-item-info",
+    ),
+    path(
+        "menu/item/get/all/<int:menu_id>/",
+        GetAllRestaurantMenuItemsApi.as_view(),
+        name="get-restaurant-menu-items",
+    ),
+    path(
+        "menu/item/edit/<int:menu_item_id>/",
+        EditRestaurantMenuItem.as_view(),
+        name="edit-restaurant-menu-item",
+    ),
+    path(
+        "menu/item/archive/<int:menu_item_id>/",
+        ArchiveRestaurantMenuItemApi.as_view(),
+        name="archive-restaurant-menu-item",
+    ),
+    path(
+        "menu/item/delete/<int:menu_item_id>/",
+        DeleteRestaurantMenuItemApi.as_view(),
+        name="delete-restaurant-menu-item",
+    ),
 ]

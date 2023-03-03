@@ -70,8 +70,9 @@ class MenuItem(models.Model):
     # image = models.ImageField(upload_to="restaurants/menu_items/", null=True, blank=True)
     name = models.CharField(max_length=200)
     description = models.TextField()
-    price = models.PositiveSmallIntegerField()
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     is_active = models.BooleanField(default=True)
+    creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     history = HistoricalRecords()
 
     def __str__(self) -> str:

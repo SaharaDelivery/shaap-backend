@@ -1,6 +1,6 @@
 from rest_framework import exceptions as rest_exceptions
 
-from restaurants.models import Menu, Restaurant
+from restaurants.models import Menu, MenuItem, Restaurant
 
 
 def get_restaurant_info(id: int) -> Restaurant:
@@ -34,7 +34,7 @@ def get_all_restaurants() -> Restaurant:
     return objs
 
 
-def get_restaurant_menu_details(id: int) -> Menu:
+def get_restaurant_menu(id: int) -> Menu:
     """This function gets a menu object by id
 
     Args:
@@ -97,3 +97,46 @@ def get_archived_restaurant_menus(restaurant_id: int) -> Menu:
 
     else:
         return objs
+
+
+def get_restaurant_menu_item(id: int) -> MenuItem:
+    """This function gets a menu item object by id
+
+    Args:
+        id (int): The id of the menu item
+
+    Raises:
+        rest_exceptions.NotFound: If menu item does not exist
+
+    Returns:
+        MenuItem: The menu item object
+    """
+    try:
+        obj = MenuItem.objects.get(id=id)
+    except MenuItem.DoesNotExist:
+        raise rest_exceptions.NotFound("Menu Item does not exist")
+
+    else:
+        return obj
+
+
+def get_all_restaurant_menu_items(id: int) -> MenuItem:
+    """This function gets all active menu items of a menu
+
+    Args:
+        menu_id (int): The id of the menu
+
+    Raises:
+        rest_exceptions.NotFound: If menu does not exist
+
+    Returns:
+        MenuItem: The Menu Item Objects
+    """
+    try:
+        menu = Menu.objects.get(id=id)
+    except Menu.DoesNotExist:
+        raise rest_exceptions.NotFound("Menu does not exist")
+
+    else:
+        objs = MenuItem.objects.filter(menu=menu, is_active=True)
+    return objs
