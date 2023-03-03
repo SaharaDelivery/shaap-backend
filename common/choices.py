@@ -1,0 +1,7 @@
+ORDER_STATUS = [
+    ("PENDING", "PENDING"),
+    ("APPROVED", "APPROVED"),
+    ("IN_PROGRESS", "IN PROGRESS"),
+    ("IN_TRANSIT", "IN TRANSIT"),
+    ("DELIVERED", "DELIVERED"),
+]
