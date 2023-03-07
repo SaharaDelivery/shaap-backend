@@ -36,6 +36,7 @@ urlpatterns = [
     path(
         "edit/<int:id>/", EditRestaurantInfoApi.as_view(), name="edit-restaurant-info"
     ),
+    # path("profile/views/", GetRestaurantProfileViewsApi.as_view(), name="get-restaurant-profile-views"),
     path(
         "disable/<int:id>/", ArchiveRestaurantApi.as_view(), name="disable-restaurant"
     ),
@@ -47,7 +48,6 @@ urlpatterns = [
         RestaurantStaffLogoutApi.as_view(),
         name="restaurant-staff-logout",
     ),
-    # path("profile/views/", GetRestaurantProfileViewsApi.as_view(), name="get-restaurant-profile-views"),
     ####
     ####
     # path("order/pending/get/", GetPendingOrdersApi.as_view(), name="get-pending-orders"),

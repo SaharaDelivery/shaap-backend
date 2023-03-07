@@ -1,6 +1,15 @@
 from rest_framework import exceptions as rest_exceptions
+from common.choices import ORDER_STATUS
 
-from restaurants.models import Menu, MenuItem, Restaurant
+from restaurants.models import (
+    Menu,
+    MenuItem,
+    Order,
+    OrderAddress,
+    OrderItem,
+    Restaurant,
+)
+from users.models import CustomUser
 
 
 def get_restaurant_info(id: int) -> Restaurant:
@@ -139,4 +148,71 @@ def get_all_restaurant_menu_items(id: int) -> MenuItem:
 
     else:
         objs = MenuItem.objects.filter(menu=menu, is_active=True)
+    return objs
+
+
+def get_all_orders_based_on_status(user: CustomUser, status: str) -> Order:
+    """This function gets all orders of a user based on the status
+
+    Args:
+        user (CustomUser): The user object
+
+    Returns:
+        Order: The Order Objects
+    """
+    valid_status = [s[0] for s in ORDER_STATUS]
+    if status in valid_status:
+        objs = Order.objects.filter(user=user, status=status)
+    else:
+        raise rest_exceptions.ValidationError("Invalid status")
+    return objs
+
+
+def get_user_order_history(user: CustomUser) -> Order:
+    """This functiom gets the order history of a user
+
+    Args:
+        user (CustomUser): The user object
+
+    Returns:
+        Order: The Order History sorted on date_created
+    """
+    orders = Order.objects.filter(user=user, paid=True, status="delivered").order_by(
+        "-date_created"
+    )
+    return orders
+
+
+def get_all_order_items(order_id: int) -> OrderItem:
+    """This function gets all order items of an order
+
+    Args:
+        id (int): The id of the order
+
+    Raises:
+        rest_exceptions.NotFound: If order does not exist
+
+    Returns:
+        OrderItem: The Order Item Objects
+    """
+    try:
+        order = Order.objects.get(order_id=order_id)
+    except Order.DoesNotExist:
+        raise rest_exceptions.NotFound("Order does not exist")
+
+    else:
+        objs = OrderItem.objects.filter(order=order)
+        return objs
+
+
+def get_saved_user_addresses(user: CustomUser) -> OrderAddress:
+    """This function gets the saved addresses of a user
+
+    Args:
+        user (CustomUser): The user object
+
+    Returns:
+        OrderAddress: The saved addresses of a user
+    """
+    objs = OrderAddress.objects.filter(user=user, saved=True)
     return objs

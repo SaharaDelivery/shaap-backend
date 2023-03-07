@@ -63,14 +63,6 @@ class EditUserAccountApi(APIView):
     class InputSerializer(serializers.Serializer):
         first_name = serializers.CharField(required=False)
         last_name = serializers.CharField(required=False)
-        username = serializers.CharField(
-            required=False,
-            validators=[UniqueValidator(queryset=CustomUser.objects.all())],
-        )
-        email = serializers.EmailField(
-            required=False,
-            validators=[UniqueValidator(queryset=CustomUser.objects.all())],
-        )
         phone_number = serializers.CharField(required=False)
 
     def put(self, request):

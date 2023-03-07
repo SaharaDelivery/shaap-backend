@@ -1,5 +1,8 @@
 import uuid
+
 from django.db import models
+
+from rest_framework import exceptions as rest_exceptions
 
 from simple_history.models import HistoricalRecords
 
@@ -72,6 +75,7 @@ class MenuItem(models.Model):
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     is_active = models.BooleanField(default=True)
+    rating = models.DecimalField(max_digits=2, decimal_places=1, default=0.0)
     creator = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     history = HistoricalRecords()
 
@@ -82,11 +86,41 @@ class MenuItem(models.Model):
 class Order(models.Model):
     order_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    Restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
-    status = models.CharField(max_length=20, choices=ORDER_STATUS, default="PENDING")
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    status = models.CharField(max_length=20, choices=ORDER_STATUS, default="pending")
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
     paid = models.BooleanField(default=False)
+    order_address = models.ForeignKey(
+        "OrderAddress", on_delete=models.CASCADE, null=True, blank=True
+    )
     date_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"OrderID: {self.user.email}"
+        return f"OrderID: {self.order_id} | {self.user.email} | {self.restaurant.name}"
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+
+    def __str__(self):
+        return f"{self.order.order_id} | {self.menu_item.name} | {self.quantity}"
+
+
+class OrderAddress(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    address_1 = models.TextField()
+    address_2 = models.TextField(blank=True, null=True)
+    phone_number = models.CharField(max_length=12)
+    email = models.EmailField()
+    saved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"{self.user.email} | {self.saved}"
+
+    def clean(self) -> None:
+        obj = OrderAddress.objects.filter(user=self.user, saved=True)
+        if len(obj) >= 2:
+            raise rest_exceptions.ValidationError("You can only have 2 saved addresses")
+        return super().clean()
