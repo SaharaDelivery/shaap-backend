@@ -6,12 +6,14 @@ from rest_framework import exceptions as rest_exceptions
 from restaurants.models import MenuItem, Order, OrderAddress, OrderItem, Restaurant
 
 from users.models import CustomUser
+from utils.generators import generate_default_username
 
 
 @transaction.atomic
 def create_user(data: dict) -> CustomUser:
     try:
-        user = CustomUser(**data)
+        default_username = generate_default_username(email=data["email"])
+        user = CustomUser(email=data["email"], username=default_username)
         user.set_password(data["password"])
         user.full_clean()
         user.save()
@@ -21,6 +23,37 @@ def create_user(data: dict) -> CustomUser:
     else:
         return user
 
+
+@transaction.atomic
+def setup_user_account(user_id: int, data: dict) -> CustomUser:
+    """This function sets up a user's account.
+
+    Args:
+        user_id (int): The user's id
+        data (dict): The user's first name, last name and phone number
+
+    Raises:
+        rest_exceptions.NotFound: When the user with the user_id does not exist
+        rest_exceptions.ValidationError: When the user's data is invalid
+
+    Returns:
+        CustomUser: The user's account
+    """
+    try:
+        user = CustomUser.objects.get(id=user_id)
+    except CustomUser.DoesNotExist:
+        raise rest_exceptions.NotFound()
+
+    try:
+        for key, value in data.items():
+            setattr(user, key, value)
+        user.full_clean()
+        user.save()
+    except django_exceptions.ValidationError as e:
+        raise rest_exceptions.ValidationError(e)
+
+    else:
+        return user
 
 @transaction.atomic
 def edit_user_account(user: CustomUser, data: dict) -> CustomUser:

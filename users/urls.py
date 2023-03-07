@@ -7,6 +7,7 @@ from users.apis import (
     LoginApi,
     LogoutApi,
     RegisterUserApi,
+    SetupUserAccountApi,
 )
 from users.order_apis import (
     AddOrderAddressApi,
@@ -23,10 +24,10 @@ from users.order_apis import (
 )
 
 urlpatterns = [
-    path("register/", RegisterUserApi.as_view(), name="signup"),
-    path("get-account/", GetUserAccountApi.as_view(), name="get-profile"),
-    path("edit-account/", EditUserAccountApi.as_view(), name="edit-profile"),
-    path("disable-account/", DisableUserAccountApi.as_view(), name="disable-account"),
+    path("account/register/", RegisterUserApi.as_view(), name="signup"),
+    path("account/setup/<int:user_id>/", SetupUserAccountApi.as_view(), name="set-profile"),
+    path("account/get/", GetUserAccountApi.as_view(), name="get-profile"),
+    path("account/edit/", EditUserAccountApi.as_view(), name="edit-profile"),
     #########
     #########
     # path("verify-email/", VerifyEmailApi.as_view(), name="verify-email"),
@@ -34,6 +35,7 @@ urlpatterns = [
     # path("change-password/", ChangePasswordApi.as_view(), name="change-password"),
     # path("change-email/", ChangeEmailApi.as_view(), name="change-email"),
     # path("change-username/", ChangeUsernameApi.as_view(), name="change-username"),
+    # path("account/disable", DisableUserAccountApi.as_view(), name="disable-account"),
     #######
     #######
     path("order/place/", PlaceOrderApi.as_view(), name="place-order"),
