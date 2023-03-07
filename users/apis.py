@@ -1,11 +1,9 @@
-from django.shortcuts import render
-
 from rest_framework import serializers, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.validators import UniqueValidator
-from users.authtoken_serializer import AuthTokenSerializer
+from utils.authtoken_serializer import AuthTokenSerializer
 
 from knox.models import AuthToken
 
@@ -65,14 +63,6 @@ class EditUserAccountApi(APIView):
     class InputSerializer(serializers.Serializer):
         first_name = serializers.CharField(required=False)
         last_name = serializers.CharField(required=False)
-        username = serializers.CharField(
-            required=False,
-            validators=[UniqueValidator(queryset=CustomUser.objects.all())],
-        )
-        email = serializers.EmailField(
-            required=False,
-            validators=[UniqueValidator(queryset=CustomUser.objects.all())],
-        )
         phone_number = serializers.CharField(required=False)
 
     def put(self, request):
