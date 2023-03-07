@@ -9,9 +9,9 @@ from users.managers import CustomUserManager
 class CustomUser(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
     username = models.CharField(max_length=50, unique=True)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    phone_number = models.CharField(max_length=12)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    phone_number = models.CharField(max_length=12, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_driver = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
