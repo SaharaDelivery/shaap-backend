@@ -13,21 +13,16 @@ from users.services import (
     disable_user_account,
     edit_user_account,
     login_user,
+    setup_user_account,
 )
 from utils.serializer_utils import inline_serializer
 
 
 class RegisterUserApi(APIView):
     class InputSerializer(serializers.Serializer):
-        username = serializers.CharField(
-            validators=[UniqueValidator(queryset=CustomUser.objects.all())]
-        )
         email = serializers.EmailField(
             validators=[UniqueValidator(queryset=CustomUser.objects.all())]
         )
-        first_name = serializers.CharField()
-        last_name = serializers.CharField()
-        phone_number = serializers.CharField()
         password = serializers.CharField()
 
     def post(self, request):
@@ -36,6 +31,20 @@ class RegisterUserApi(APIView):
             create_user(data=data.data)
             return Response(status=status.HTTP_201_CREATED)
         return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class SetupUserAccountApi(APIView):
+    class InputSerializer(serializers.Serializer):
+        first_name = serializers.CharField()
+        last_name = serializers.CharField()
+        phone_number = serializers.CharField()
+
+    def put(self, request, user_id):
+        data = self.InputSerializer(data=request.data)
+        if data.is_valid(raise_exception=True):
+            setup_user_account(user_id=user_id, data=data.data)
+            return Response(status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_400_BAD_REQUEST, data=data.errors)
 
 
 class GetUserAccountApi(APIView):
