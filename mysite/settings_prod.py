@@ -15,7 +15,7 @@ SECRET_KEY = os.environ["SECRET_KEY"]
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["shaap.io", "api.shaap.io"]
 
 # FORM SUBMISSION
 # Comment out the following line and place your railway URL, and your production URL in the array.
@@ -153,7 +153,7 @@ REST_FRAMEWORK = {
 REST_KNOX = {
     "SECURE_HASH_ALGORITHM": "cryptography.hazmat.primitives.hashes.SHA512",
     "AUTH_TOKEN_CHARACTER_LENGTH": 64,
-    "TOKEN_TTL": timedelta(hours=96), # 4days
+    "TOKEN_TTL": timedelta(hours=96),  # 4days
     "USER_SERIALIZER": "knox.serializers.UserSerializer",
     "TOKEN_LIMIT_PER_USER": 3,
     "AUTO_REFRESH": True,
