@@ -24,8 +24,14 @@ from users.order_apis import (
 )
 
 urlpatterns = [
+    path("account/login/", LoginApi.as_view(), name="login"),
+    path("account/logout/", LogoutApi.as_view(), name="logout"),
     path("account/register/", RegisterUserApi.as_view(), name="signup"),
-    path("account/setup/<int:user_id>/", SetupUserAccountApi.as_view(), name="set-profile"),
+    path(
+        "account/setup/<int:user_id>/",
+        SetupUserAccountApi.as_view(),
+        name="set-profile",
+    ),
     path("account/get/", GetUserAccountApi.as_view(), name="get-profile"),
     path("account/edit/", EditUserAccountApi.as_view(), name="edit-profile"),
     #########
@@ -77,8 +83,4 @@ urlpatterns = [
         DeleteOrderItem.as_view(),
         name="delete-order-item",
     ),
-    #######
-    #######
-    path("login/", LoginApi.as_view(), name="login"),
-    path("logout/", LogoutApi.as_view(), name="logout"),
 ]
