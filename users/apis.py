@@ -95,6 +95,14 @@ class LoginApi(APIView):
         email = serializers.EmailField()
         password = serializers.CharField()
 
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        first_name = serializers.CharField()
+        last_name = serializers.CharField()
+        phone_number = serializers.CharField()
+        username = serializers.CharField()
+        email = serializers.EmailField()
+
     def post(self, request):
         data = AuthTokenSerializer(data=request.data)
         if data.is_valid(raise_exception=True):
@@ -102,7 +110,10 @@ class LoginApi(APIView):
             # AuthToken returns a tuple of (token, user) so we only get the token,
             _, token = AuthToken.objects.create(user)
             login_user(user=user)
-            return Response(data={"token": token}, status=status.HTTP_200_OK)
+            data = self.OutputSerializer(user)
+            return Response(
+                data={"token": token, "user": data.data}, status=status.HTTP_200_OK
+            )
         return Response(status=status.HTTP_400_BAD_REQUEST, data=data.errors)
 
 
