@@ -57,7 +57,9 @@ ROOT_URLCONF = "mysite.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [
+            "templates"
+        ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -141,6 +143,7 @@ CORS_ALLOW_METHODS = [
 
 # Django Rest Framework Settings
 REST_FRAMEWORK = {
+    "EXCEPTION_HANDLER": "core.exception_handlers.custom_exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
 }
 
