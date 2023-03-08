@@ -28,8 +28,8 @@ class RegisterUserApi(APIView):
     def post(self, request):
         data = self.InputSerializer(data=request.data)
         if data.is_valid(raise_exception=True):
-            create_user(data=data.data)
-            return Response(status=status.HTTP_201_CREATED)
+            user = create_user(data=data.data)
+            return Response(status=status.HTTP_201_CREATED, data=user.id)
         return Response(data.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

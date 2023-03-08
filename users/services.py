@@ -11,6 +11,17 @@ from utils.generators import generate_default_username
 
 @transaction.atomic
 def create_user(data: dict) -> CustomUser:
+    """This function creates a user.
+
+    Args:
+        data (dict): The user's email and password
+
+    Raises:
+        rest_exceptions.ValidationError: If the user's data is invalid
+
+    Returns:
+        CustomUser: The created user
+    """
     try:
         default_username = generate_default_username(email=data["email"])
         user = CustomUser(email=data["email"], username=default_username)
