@@ -144,6 +144,12 @@ CORS_ALLOW_METHODS = [
     "DELETE",
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.up.railway.app/",
+    "https://shaap.io",
+    "https://api.shaap.io",
+]
+
 # Django Rest Framework Settings
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
