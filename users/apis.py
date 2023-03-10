@@ -90,6 +90,22 @@ class DisableUserAccountApi(APIView):
         return Response(status=status.HTTP_200_OK)
 
 
+class ConfirmTokenApi(APIView):
+    permission_classes = [IsAuthenticated]
+
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        first_name = serializers.CharField()
+        last_name = serializers.CharField()
+        phone_number = serializers.CharField()
+        username = serializers.CharField()
+        email = serializers.EmailField()
+
+    def get(self, request):
+        data = self.OutputSerializer(request.user)
+        return Response(data=data.data, status=status.HTTP_200_OK)
+
+
 class LoginApi(APIView):
     class InputSerializer(serializers.Serializer):
         email = serializers.EmailField()
@@ -118,6 +134,8 @@ class LoginApi(APIView):
 
 
 class LogoutApi(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         # deletes all the tokens the user has
         request.user.auth_token_set.all().delete()

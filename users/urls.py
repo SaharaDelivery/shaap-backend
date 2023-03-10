@@ -1,6 +1,7 @@
 from django.urls import path
 
 from users.apis import (
+    ConfirmTokenApi,
     DisableUserAccountApi,
     EditUserAccountApi,
     GetUserAccountApi,
@@ -24,6 +25,7 @@ from users.order_apis import (
 )
 
 urlpatterns = [
+    path("account/token/", ConfirmTokenApi.as_view(), name="confirm-token"),
     path("account/login/", LoginApi.as_view(), name="login"),
     path("account/logout/", LogoutApi.as_view(), name="logout"),
     path("account/register/", RegisterUserApi.as_view(), name="signup"),
