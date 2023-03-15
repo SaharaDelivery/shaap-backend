@@ -59,11 +59,8 @@ class GetUserAccountApi(APIView):
         # adresses = inline_serializer(fields={})
 
     def get(self, request):
-        try:
-            data = self.OutputSerializer(request.user)
-            return Response(data=data.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response(status=status.HTTP_400_BAD_REQUEST, data=e)
+        data = self.OutputSerializer(request.user)
+        return Response(data=data.data, status=status.HTTP_200_OK)
 
 
 class EditUserAccountApi(APIView):
@@ -80,14 +77,6 @@ class EditUserAccountApi(APIView):
             edit_user_account(user=request.user, data=data.data)
             return Response(status=status.HTTP_200_OK)
         return Response(status=status.HTTP_400_BAD_REQUEST, data=data.errors)
-
-
-class DisableUserAccountApi(APIView):
-    permission_classes = [IsAuthenticated]
-
-    def delete(self, request):
-        disable_user_account(user=request.user)
-        return Response(status=status.HTTP_200_OK)
 
 
 class ConfirmTokenApi(APIView):

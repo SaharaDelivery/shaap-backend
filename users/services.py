@@ -66,8 +66,20 @@ def setup_user_account(user_id: int, data: dict) -> CustomUser:
     else:
         return user
 
+
 @transaction.atomic
 def edit_user_account(user: CustomUser, data: dict) -> CustomUser:
+    """This function edits a user's account details (first name, last name and phone number).
+
+    Args:
+        user (CustomUser): The user
+        data (dict): the data to be updated
+    Raises:
+        rest_exceptions.ValidationError: When the user's data is invalid
+
+    Returns:
+        CustomUser: The updated user account
+    """
     try:
         for key, value in data.items():
             setattr(user, key, value)
@@ -84,19 +96,6 @@ def edit_user_account(user: CustomUser, data: dict) -> CustomUser:
 def login_user(user: CustomUser) -> None:
     try:
         user.last_login = timezone.now()
-        user.full_clean()
-        user.save()
-    except django_exceptions.ValidationError as e:
-        raise rest_exceptions.ValidationError(e)
-
-    else:
-        return user
-
-
-@transaction.atomic
-def disable_user_account(user: CustomUser) -> None:
-    try:
-        user.is_active = False
         user.full_clean()
         user.save()
     except django_exceptions.ValidationError as e:

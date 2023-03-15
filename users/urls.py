@@ -2,7 +2,6 @@ from django.urls import path
 
 from users.apis import (
     ConfirmTokenApi,
-    DisableUserAccountApi,
     EditUserAccountApi,
     GetUserAccountApi,
     LoginApi,
@@ -32,18 +31,18 @@ urlpatterns = [
     path(
         "account/setup/<int:user_id>/",
         SetupUserAccountApi.as_view(),
-        name="set-profile",
+        name="setup-profile",
     ),
     path("account/get/", GetUserAccountApi.as_view(), name="get-profile"),
     path("account/edit/", EditUserAccountApi.as_view(), name="edit-profile"),
     #########
     #########
-    # path("verify-email/", VerifyEmailApi.as_view(), name="verify-email"),
-    # path("forgot-password/", ForgotPasswordApi.as_view(), name="forgot-password"),
-    # path("change-password/", ChangePasswordApi.as_view(), name="change-password"),
-    # path("change-email/", ChangeEmailApi.as_view(), name="change-email"),
-    # path("change-username/", ChangeUsernameApi.as_view(), name="change-username"),
-    # path("account/disable", DisableUserAccountApi.as_view(), name="disable-account"),
+    # path("email/verify", VerifyEmailApi.as_view(), name="verify-email"),
+    # path("email/change/", ChangeEmailApi.as_view(), name="change-email"),
+    # path("account/password/reset/", ResetPasswordApi.as_view(), name="reset-password"),
+    # path("account/password/change/", ChangePasswordApi.as_view(), name="change-password"),
+    # path("account/username/change/", ChangeUsernameApi.as_view(), name="change-username"),
+    # path("account/disable/", DisableUserAccountApi.as_view(), name="disable-account"),
     #######
     #######
     path("order/place/", PlaceOrderApi.as_view(), name="place-order"),
@@ -52,7 +51,7 @@ urlpatterns = [
         GetOrderBasedOnStatus.as_view(),
         name="get-orders-based-on-status",
     ),
-    path("order/details/", GetOrderDetailsApi.as_view(), name="get-cart"),
+    path("order/details/", GetOrderDetailsApi.as_view(), name="get-order-details"),
     path("order/history/", GetOrderHistoryApi.as_view(), name="get-order-history"),
     ####
     ####
