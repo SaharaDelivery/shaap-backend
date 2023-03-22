@@ -21,7 +21,7 @@ def filter_restaurants(params: dict) -> Restaurant:
     queryset = Restaurant.objects.all()
     name = params.get("name", None)
     cuisine = params.get("cuisine", None)
-    is_opened = params.get("is_opened", None)
+    is_open = params.get("is_opened", None)
     rating = params.get("rating", None)
     if name is not None:
         queryset = queryset.filter(name__icontains=name)
@@ -30,7 +30,7 @@ def filter_restaurants(params: dict) -> Restaurant:
             queryset = queryset.filter(cuisine__in=[cuisine])
         else:
             queryset = queryset.filter(cuisine__in=cuisine.split(","))
-    if is_opened is not None:
+    if is_open is not None:
         queryset = Restaurant.objects.filter(
             Q(opening_time__lte=current_time) & Q(closing_time__gte=current_time)
         )
