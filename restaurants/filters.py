@@ -1,6 +1,8 @@
-from django.utils import timezone
+from datetime import datetime
+from django.db.models import Q
 
 from restaurants.models import Restaurant
+
 
 def filter_restaurants(params: dict) -> Restaurant:
     """This function filters restaurants based on the below parameters
@@ -15,7 +17,7 @@ def filter_restaurants(params: dict) -> Restaurant:
     Returns:
         Restaurant: The restaurants that fit the criteria
     """
-    current_time = timezone.now()
+    current_time = datetime.now().time()
     queryset = Restaurant.objects.all()
     name = params.get("name", None)
     cuisine = params.get("cuisine", None)
@@ -29,8 +31,8 @@ def filter_restaurants(params: dict) -> Restaurant:
         else:
             queryset = queryset.filter(cuisine__in=cuisine.split(","))
     if is_opened is not None:
-        queryset = queryset.filter(
-            opening_time__lte=current_time, closing_time__gte=current_time
+        queryset = Restaurant.objects.filter(
+            Q(opening_time__lte=current_time) & Q(closing_time__gte=current_time)
         )
     if rating is not None:
         queryset = queryset.filter(rating__gte=rating)
