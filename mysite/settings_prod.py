@@ -134,7 +134,8 @@ STATICFILES_STORAGE = "storages.backends.azure_storage.AzureStorage"
 AZURE_ACCOUNT_NAME = os.environ["AZURE_ACCOUNT_NAME"]
 AZURE_ACCOUNT_KEY = os.environ["AZURE_ACCOUNT_KEY"]
 AZURE_CONTAINER = os.environ["AZURE_CONTAINER"]
-
+# This works but if enabled, django admin wont be able to load static files
+# AZURE_CUSTOM_DOMAIN = "http://media.shaap.io/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
