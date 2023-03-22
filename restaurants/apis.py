@@ -4,10 +4,12 @@ from rest_framework.views import APIView
 from rest_framework.validators import UniqueValidator
 
 from knox.models import AuthToken
+from restaurants.filters import filter_restaurants
 
 from restaurants.models import Cuisine, Menu, Restaurant
 from restaurants.selectors import (
     get_all_restaurant_menu_items,
+    get_all_restaurants_with_cuisine,
     get_archived_restaurant_menus,
     get_all_restaurant_menus,
     get_all_restaurants,
@@ -120,8 +122,46 @@ class GetAllRestaurantsApi(APIView):
         return Response(status=status.HTTP_200_OK, data=data.data)
 
 
+class GetRestaurantThatHasCurrentCuisineApi(APIView):
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        # image = serializers.ImageField()
+        name = serializers.CharField()
+        description = serializers.CharField()
+        cuisine = inline_serializer(
+            many=True,
+            read_only=True,
+            fields={"id": serializers.IntegerField(), "name": serializers.CharField()},
+        )
+        opening_time = serializers.TimeField()
+        closing_time = serializers.TimeField()
+        rating = serializers.DecimalField(max_digits=2, decimal_places=1)
+
+    def get(self, request, cuisine):
+        restaurants = get_all_restaurants_with_cuisine(cuisine=cuisine)
+        data = self.OutputSerializer(restaurants, many=True)
+        return Response(status=status.HTTP_200_OK, data=data.data)
+
+
 class GetAllFilteredRestaurantsApi(APIView):
-    pass
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        # image = serializers.ImageField()
+        name = serializers.CharField()
+        description = serializers.CharField()
+        cuisine = inline_serializer(
+            many=True,
+            read_only=True,
+            fields={"id": serializers.IntegerField(), "name": serializers.CharField()},
+        )
+        opening_time = serializers.TimeField()
+        closing_time = serializers.TimeField()
+        rating = serializers.DecimalField(max_digits=2, decimal_places=1)
+
+    def get(self, request):
+        filtered_restaurants = filter_restaurants(request.query_params)
+        data = self.OutputSerializer(filtered_restaurants, many=True)
+        return Response(data.data)
 
 
 class EditRestaurantInfoApi(APIView):

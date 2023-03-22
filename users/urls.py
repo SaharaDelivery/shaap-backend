@@ -68,12 +68,12 @@ urlpatterns = [
     ),
     ####
     ####
+    path("order/item/add/", AddOrderItemApi.as_view(), name="add-order-item"),
     path(
         "order/item/get/all/<int:order_id>/",
         GetAllOrderItemsApi.as_view(),
         name="get-all-order-item",
     ),
-    path("order/item/add/", AddOrderItemApi.as_view(), name="add-order-item"),
     path(
         "order/item/reduce/<int:order_item_id>/",
         ReduceOrderItemQuantityApi.as_view(),

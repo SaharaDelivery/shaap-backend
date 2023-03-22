@@ -10,7 +10,6 @@ from knox.models import AuthToken
 from users.models import CustomUser
 from users.services import (
     create_user,
-    disable_user_account,
     edit_user_account,
     login_user,
     setup_user_account,

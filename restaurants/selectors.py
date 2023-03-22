@@ -2,6 +2,7 @@ from rest_framework import exceptions as rest_exceptions
 from common.choices import ORDER_STATUS
 
 from restaurants.models import (
+    Cuisine,
     Menu,
     MenuItem,
     Order,
@@ -41,6 +42,25 @@ def get_all_restaurants() -> Restaurant:
     """
     objs = Restaurant.objects.filter(is_active=True)
     return objs
+
+
+def get_all_restaurants_with_cuisine(cuisine: str) -> Restaurant:
+    """This function gets all active restaurants with a specific cuisine
+
+    Args:
+        cuisine (str): The cuisine of the restaurant
+
+    Returns:
+        Restaurant: The list of restaurants that match the cuisine
+    """
+    try:
+        cuisine = Cuisine.objects.get(name=cuisine)
+    except Cuisine.DoesNotExist:
+        raise rest_exceptions.NotFound("Cuisine does not exist")
+
+    else:
+        objs = Restaurant.objects.filter(cuisine__in=[cuisine], is_active=True)
+        return objs
 
 
 def get_restaurant_menu(id: int) -> Menu:
