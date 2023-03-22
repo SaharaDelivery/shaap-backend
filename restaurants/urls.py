@@ -19,7 +19,7 @@ from restaurants.apis import (
     GetRestaurantInfoApi,
     GetRestaurantMenuDetailsApi,
     GetRestaurantMenuItemInfo,
-    GetRestaurantThatHasCurrentCuisineApi,
+    GetRestaurantWithCuisineApi,
     RegisterRestaurantApi,
     RestaurantStaffLoginApi,
     RestaurantStaffLogoutApi,
@@ -31,7 +31,7 @@ urlpatterns = [
     path("get/all/", GetAllRestaurantsApi.as_view(), name="get-all-restaurants"),
     path(
         "get/cuisine/<str:cuisine>/",
-        GetRestaurantThatHasCurrentCuisineApi.as_view(),
+        GetRestaurantWithCuisineApi.as_view(),
         name="get-restaurant-that-has-current-cuisine",
     ),
     path(

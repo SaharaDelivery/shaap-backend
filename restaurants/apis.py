@@ -122,7 +122,7 @@ class GetAllRestaurantsApi(APIView):
         return Response(status=status.HTTP_200_OK, data=data.data)
 
 
-class GetRestaurantThatHasCurrentCuisineApi(APIView):
+class GetRestaurantWithCuisineApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         # image = serializers.ImageField()
