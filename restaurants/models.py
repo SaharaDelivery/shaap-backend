@@ -12,8 +12,7 @@ from common.choices import ORDER_STATUS
 
 
 class Restaurant(models.Model):
-    # logo = models.ImageField(upload_to="restaurants/logo/", null=True, blank=True)
-    # cover_photo = models.ImageField(upload_to="restaurants/cover_photo/", null=True, blank=True)
+    cover_photo = models.ImageField(upload_to="restaurants/cover_sphoto/", blank=True, null=True)
     name = models.CharField(max_length=200, unique=True)
     description = models.TextField()
     address = models.TextField()
@@ -70,7 +69,7 @@ class Menu(models.Model):
 
 class MenuItem(models.Model):
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name="menu_items")
-    # image = models.ImageField(upload_to="restaurants/menu_items/", null=True, blank=True)
+    image = models.ImageField(upload_to="restaurants/menu_items/", null=True, blank=True)
     name = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.0)
