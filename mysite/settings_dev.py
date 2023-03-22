@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_filters",
     "simple_history",
+    "storages",
     "knox",
     "users",
     "restaurants",
@@ -57,9 +58,7 @@ ROOT_URLCONF = "mysite.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [
-            "templates"
-        ],
+        "DIRS": ["templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -126,6 +125,13 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
+# Azure Storage
+DEFAULT_FILE_STORAGE = "storages.backends.azure_storage.AzureStorage"
+STATICFILES_STORAGE = "storages.backends.azure_storage.AzureStorage"
+AZURE_ACCOUNT_NAME = "shaap1media"
+AZURE_ACCOUNT_KEY = "YBwqtTsWV9SySRCEr0ogXB7YOVZt2kc309xK+ps4q3/LZiHqD9f8KhfHj/8ujU415GrjW6x3NN08+ASt0pNATw=="
+AZURE_CONTAINER = "shaapdevelopment"
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
@@ -151,7 +157,7 @@ REST_FRAMEWORK = {
 REST_KNOX = {
     "SECURE_HASH_ALGORITHM": "cryptography.hazmat.primitives.hashes.SHA512",
     "AUTH_TOKEN_CHARACTER_LENGTH": 64,
-    "TOKEN_TTL": timedelta(hours=96), # 4days
+    "TOKEN_TTL": timedelta(hours=96),  # 4days
     "USER_SERIALIZER": "knox.serializers.UserSerializer",
     "TOKEN_LIMIT_PER_USER": 3,
     "AUTO_REFRESH": True,

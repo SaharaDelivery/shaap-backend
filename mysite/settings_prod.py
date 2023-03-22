@@ -34,6 +34,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "django_filters",
     "simple_history",
+    "storages",
     "knox",
     "users",
     "restaurants",
@@ -123,10 +124,17 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-
 STATIC_URL = "static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+
+# Azure Storage
+DEFAULT_FILE_STORAGE = "storages.backends.azure_storage.AzureStorage"
+STATICFILES_STORAGE = "storages.backends.azure_storage.AzureStorage"
+AZURE_ACCOUNT_NAME = os.environ["AZURE_ACCOUNT_NAME"]
+AZURE_ACCOUNT_KEY = os.environ["AZURE_ACCOUNT_KEY"]
+AZURE_CONTAINER = os.environ["AZURE_CONTAINER"]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
