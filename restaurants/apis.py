@@ -8,6 +8,7 @@ from restaurants.filters import filter_restaurants
 
 from restaurants.models import Cuisine, Menu, Restaurant
 from restaurants.selectors import (
+    get_all_cuisines,
     get_all_restaurant_menu_items,
     get_all_restaurants_with_cuisine,
     get_archived_restaurant_menus,
@@ -60,7 +61,7 @@ class RegisterRestaurantApi(APIView):
     permission_classes = [IsAdminUser]
 
     class InputSerializer(serializers.Serializer):
-        # image = serializers.ImageField()
+        cover_photo = serializers.ImageField()
         name = serializers.CharField(
             validators=[UniqueValidator(queryset=Restaurant.objects.all())]
         )
@@ -83,8 +84,8 @@ class RegisterRestaurantApi(APIView):
 
 class GetRestaurantInfoApi(APIView):
     class OutputSerializer(serializers.Serializer):
-        # image = serializers.ImageField()
         id = serializers.IntegerField()
+        cover_photo = serializers.ImageField()
         name = serializers.CharField()
         description = serializers.CharField()
         address = serializers.CharField()
@@ -104,7 +105,7 @@ class GetRestaurantInfoApi(APIView):
 class GetAllRestaurantsApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
-        # image = serializers.ImageField()
+        cover_photo = serializers.ImageField()
         name = serializers.CharField()
         description = serializers.CharField()
         cuisine = inline_serializer(
@@ -122,10 +123,21 @@ class GetAllRestaurantsApi(APIView):
         return Response(status=status.HTTP_200_OK, data=data.data)
 
 
+class GetAllRestaurantCuisinesApi(APIView):
+    class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
+        name = serializers.CharField()
+
+    def get(self, request):
+        cuisines = get_all_cuisines()
+        data = self.OutputSerializer(cuisines, many=True)
+        return Response(status=status.HTTP_200_OK, data=data.data)
+
+
 class GetRestaurantWithCuisineApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
-        # image = serializers.ImageField()
+        cover_photo = serializers.ImageField()
         name = serializers.CharField()
         description = serializers.CharField()
         cuisine = inline_serializer(
@@ -146,7 +158,7 @@ class GetRestaurantWithCuisineApi(APIView):
 class GetAllFilteredRestaurantsApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
-        # image = serializers.ImageField()
+        cover_photo = serializers.ImageField()
         name = serializers.CharField()
         description = serializers.CharField()
         cuisine = inline_serializer(
@@ -168,6 +180,7 @@ class EditRestaurantInfoApi(APIView):
     permission_classes = [IsRestaurantAdmin]
 
     class InputSerializer(serializers.Serializer):
+        cover_photo = serializers.ImageField(required=False)
         description = serializers.CharField(required=False)
         address = serializers.CharField(required=False)
         phone_number = serializers.CharField(required=False, max_length=12)
@@ -286,6 +299,7 @@ class CreateRestaurantMenuItemApi(APIView):
 
     class InputSerializer(serializers.Serializer):
         menu = serializers.PrimaryKeyRelatedField(queryset=Menu.objects.all())
+        image = serializers.ImageField()
         name = serializers.CharField(max_length=200)
         description = serializers.CharField()
         price = serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -301,6 +315,7 @@ class CreateRestaurantMenuItemApi(APIView):
 class GetAllRestaurantMenuItemsApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
+        image = serializers.ImageField()
         name = serializers.CharField()
         description = serializers.CharField()
         price = serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -314,6 +329,7 @@ class GetAllRestaurantMenuItemsApi(APIView):
 class GetRestaurantMenuItemInfo(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
+        image = serializers.ImageField()
         name = serializers.CharField()
         description = serializers.CharField()
         price = serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -328,6 +344,7 @@ class EditRestaurantMenuItem(APIView):
     permission_classes = [IsRestaurantAdmin]
 
     class InputSerializer(serializers.Serializer):
+        image = serializers.ImageField(required=False)
         name = serializers.CharField(required=False, max_length=200)
         description = serializers.CharField(required=False)
         price = serializers.DecimalField(

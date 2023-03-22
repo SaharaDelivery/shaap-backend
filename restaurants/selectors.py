@@ -44,6 +44,16 @@ def get_all_restaurants() -> Restaurant:
     return objs
 
 
+def get_all_cuisines() -> Cuisine:
+    """This function gets all cuisines
+
+    Returns:
+        Cuisine: The cuisine objects
+    """
+    objs = Cuisine.objects.all()
+    return objs
+
+
 def get_all_restaurants_with_cuisine(cuisine: str) -> Restaurant:
     """This function gets all active restaurants with a specific cuisine
 

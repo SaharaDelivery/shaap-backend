@@ -11,6 +11,7 @@ from restaurants.apis import (
     EditRestaurantInfoApi,
     EditRestaurantMenuApi,
     EditRestaurantMenuItem,
+    GetAllRestaurantCuisinesApi,
     GetAllRestaurantMenuItemsApi,
     GetArchivedRestaurantMenusApi,
     GetAllFilteredRestaurantsApi,
@@ -29,6 +30,11 @@ urlpatterns = [
     path("register/", RegisterRestaurantApi.as_view(), name="register-restaurant"),
     path("get/<int:id>/", GetRestaurantInfoApi.as_view(), name="get-restaurant-info"),
     path("get/all/", GetAllRestaurantsApi.as_view(), name="get-all-restaurants"),
+    path(
+        "cuisines/get/all/",
+        GetAllRestaurantCuisinesApi.as_view(),
+        name="get-all-restaurant-cuisines",
+    ),
     path(
         "get/cuisine/<str:cuisine>/",
         GetRestaurantWithCuisineApi.as_view(),
