@@ -1,4 +1,6 @@
 from rest_framework import exceptions as rest_exceptions
+from rest_framework.serializers import Serializer
+
 from common.choices import ORDER_STATUS
 
 from restaurants.models import (
@@ -26,7 +28,7 @@ def get_restaurant_info(id: int) -> Restaurant:
         Restaurant: The restaurant object
     """
     try:
-        obj = Restaurant.objects.filter(id=id, is_active=True)
+        obj = Restaurant.objects.get(id=id, is_active=True)
     except Restaurant.DoesNotExist:
         raise rest_exceptions.NotFound("Restaurant does not exist")
 
@@ -159,7 +161,31 @@ def get_restaurant_menu_item(id: int) -> MenuItem:
         return obj
 
 
-def get_all_restaurant_menu_items(id: int) -> MenuItem:
+def get_all_restaurant_menu_items(restaurant_id: int) -> MenuItem:
+    """This function gets all active menu items of a restaurant
+
+    Args:
+        restaurant_id (int): The id of the restaurant
+
+    Raises:
+        rest_exceptions.NotFound: If restaurant does not exist
+
+    Returns:
+        MenuItem: The Menu Item Objects
+    """
+    try:
+        restaurant = Restaurant.objects.get(id=restaurant_id)
+    except Restaurant.DoesNotExist:
+        raise rest_exceptions.NotFound("Restaurant does not exist")
+
+    else:
+        objs = MenuItem.objects.filter(
+            menu__restaurant=restaurant, is_active=True
+        ).prefetch_related("menu")
+    return objs
+
+
+def get_all_restaurant_menu_items_under_menu(id: int) -> MenuItem:
     """This function gets all active menu items of a menu
 
     Args:
@@ -179,6 +205,28 @@ def get_all_restaurant_menu_items(id: int) -> MenuItem:
     else:
         objs = MenuItem.objects.filter(menu=menu, is_active=True)
     return objs
+
+
+def get_menu_items_with_menu(menu_items: MenuItem, serializer: Serializer) -> MenuItem:
+    """This function gets all menu items with the menu object
+
+    Args:
+        menu_items (MenuItem): The menu items object
+
+    Returns:
+        MenuItem: The Menu Item Objects
+    """
+    # Not sure which excepion might occure but just as a precaution we will catch all
+    try:
+        menus = {}
+        for name, id in Menu.objects.values_list("name", "id"):
+            menus[name] = []
+        for menu_item in menu_items:
+            menu_name = menu_item.menu.name
+            menus[menu_name].append(serializer(menu_item).data)
+    except Exception as e:
+        raise rest_exceptions.APIException(e)
+    return menus
 
 
 def get_all_orders_based_on_status(user: CustomUser, status: str) -> Order:

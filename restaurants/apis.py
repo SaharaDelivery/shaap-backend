@@ -10,10 +10,12 @@ from restaurants.models import Cuisine, Menu, Restaurant
 from restaurants.selectors import (
     get_all_cuisines,
     get_all_restaurant_menu_items,
+    get_all_restaurant_menu_items_under_menu,
     get_all_restaurants_with_cuisine,
     get_archived_restaurant_menus,
     get_all_restaurant_menus,
     get_all_restaurants,
+    get_menu_items_with_menu,
     get_restaurant_info,
     get_restaurant_menu,
     get_restaurant_menu_item,
@@ -320,10 +322,27 @@ class GetAllRestaurantMenuItemsApi(APIView):
         description = serializers.CharField()
         price = serializers.DecimalField(max_digits=10, decimal_places=2)
 
-    def get(self, request, menu_id):
-        items = get_all_restaurant_menu_items(id=menu_id)
-        data = self.OutputSerializer(items, many=True)
-        return Response(status=status.HTTP_200_OK, data=data.data)
+    def get(self, request, restaurant_id):
+        menu_items = get_all_restaurant_menu_items(restaurant_id=restaurant_id)
+        menus = get_menu_items_with_menu(
+            menu_items=menu_items, serializer=self.OutputSerializer
+        )
+        return Response(status=status.HTTP_200_OK, data=menus)
+
+
+# Not Used
+# class GetAllRestaurantMenuItemsUnderMenuApi(APIView):
+#     class OutputSerializer(serializers.Serializer):
+#         id = serializers.IntegerField()
+#         image = serializers.ImageField()
+#         name = serializers.CharField()
+#         description = serializers.CharField()
+#         price = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+#     def get(self, request, menu_id):
+#         items = get_all_restaurant_menu_items_under_menu(id=menu_id)
+#         data = self.OutputSerializer(items, many=True)
+#         return Response(status=status.HTTP_200_OK, data=data.data)
 
 
 class GetRestaurantMenuItemInfo(APIView):

@@ -106,7 +106,23 @@ def login_user(user: CustomUser) -> None:
 
 
 @transaction.atomic
-def place_order(user: CustomUser, restaurant: Restaurant, menu_item: MenuItem) -> Order:
+def place_order(
+    user: CustomUser, restaurant: Restaurant, menu_item: MenuItem, quantity: int
+) -> Order:
+    """This function places an order
+
+    Args:
+        user (CustomUser): The user object
+        restaurant (Restaurant): The restaurant object
+        menu_item (MenuItem): The menu item object
+        quantity (int): The quantity of the menu item
+
+    Raises:
+        rest_exceptions.ValidationError: When the order or order item is invalid
+
+    Returns:
+        Order: The created order object
+    """
     try:
         order = Order(user=user, restaurant=restaurant)
         order.full_clean()

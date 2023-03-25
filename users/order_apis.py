@@ -32,15 +32,18 @@ class PlaceOrderApi(APIView):
             queryset=Restaurant.objects.all()
         )
         menu_item = serializers.PrimaryKeyRelatedField(queryset=MenuItem.objects.all())
+        quantity = serializers.IntegerField(validators=[MinValueValidator(1)])
 
     def post(self, request):
         data = self.InputSerializer(data=request.data)
         if data.is_valid(raise_exception=True):
-            place_order(
+            order = place_order(
                 user=request.user,
                 **data.validated_data,
             )
-            return Response(status=status.HTTP_201_CREATED)
+            return Response(
+                status=status.HTTP_201_CREATED, data={"order_id": order.order_id}
+            )
         return Response(status=status.HTTP_400_BAD_REQUEST, data=data.errors)
 
 

@@ -13,6 +13,7 @@ from restaurants.apis import (
     EditRestaurantMenuItem,
     GetAllRestaurantCuisinesApi,
     GetAllRestaurantMenuItemsApi,
+    # GetAllRestaurantMenuItemsUnderMenuApi,
     GetArchivedRestaurantMenusApi,
     GetAllFilteredRestaurantsApi,
     GetAllRestaurantMenusApi,
@@ -114,15 +115,20 @@ urlpatterns = [
         name="create-restaurant-menu-item",
     ),
     path(
+        "menu/item/get/all/<int:restaurant_id>/",
+        GetAllRestaurantMenuItemsApi.as_view(),
+        name="get-all-restaurant-menu-items",
+    ),
+    path(
         "menu/item/get/<int:menu_item_id>/",
         GetRestaurantMenuItemInfo.as_view(),
         name="get-restaurant-menu-item-info",
     ),
-    path(
-        "menu/item/get/all/<int:menu_id>/",
-        GetAllRestaurantMenuItemsApi.as_view(),
-        name="get-restaurant-menu-items",
-    ),
+    # path(
+    #     "menu/item/get/all/<int:menu_id>/",
+    #     GetAllRestaurantMenuItemsUnderMenuApi.as_view(),
+    #     name="get-restaurant-menu-items-under-menu",
+    # ),
     path(
         "menu/item/edit/<int:menu_item_id>/",
         EditRestaurantMenuItem.as_view(),
