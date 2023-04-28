@@ -353,7 +353,11 @@ class GetRestaurantMenuItemInfo(APIView):
         image = serializers.ImageField()
         name = serializers.CharField()
         description = serializers.CharField()
+        menu = serializers.SerializerMethodField()
         price = serializers.DecimalField(max_digits=10, decimal_places=2)
+        
+        def get_menu(self, obj):
+            return obj.menu.name
 
     def get(self, request, menu_item_id):
         item = get_restaurant_menu_item(id=menu_item_id)
