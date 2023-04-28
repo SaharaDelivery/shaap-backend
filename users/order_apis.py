@@ -13,6 +13,7 @@ from restaurants.selectors import (
     get_saved_user_addresses,
     get_user_order_history,
 )
+from users.selectors import get_all_orders
 from users.services import (
     add_order_address,
     add_order_item,
@@ -79,6 +80,38 @@ class GetOrderHistoryApi(APIView):
         return Response(status=status.HTTP_200_OK, data=data.data)
 
 
+class GetAllOrdersApi(APIView):
+    permission_classes = [IsAuthenticated]
+
+    class OutputSerializer(serializers.Serializer):
+        order_id = serializers.CharField()
+        restaurant = inline_serializer(
+            fields={"id": serializers.IntegerField(), "name": serializers.CharField()}
+        )
+        status = serializers.CharField()
+        total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
+        order_items = serializers.SerializerMethodField()
+
+        def get_order_items(self, obj):
+            order_items = get_all_order_items(order_id=obj.order_id)
+            data = self.OrderItemSerializer(order_items, many=True)
+            return data.data
+
+        class OrderItemSerializer(serializers.Serializer):
+            menu_item = inline_serializer(
+                fields={
+                    "name": serializers.CharField(),
+                    "price": serializers.DecimalField(max_digits=10, decimal_places=2),
+                }
+            )
+            quantity = serializers.IntegerField()
+
+    def get(self, request):
+        orders = get_all_orders(user=request.user)
+        data = self.OutputSerializer(orders, many=True)
+        return Response(status=status.HTTP_200_OK, data=data.data)
+
+
 # NOTE: Needs further review
 class GetOrderDetailsApi(APIView):
     permission_classes = [IsAuthenticated]
@@ -87,8 +120,10 @@ class GetOrderDetailsApi(APIView):
         order_id = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
 
     class OutputSerializer(serializers.Serializer):
-        order_id = serializers.IntegerField()
-        restaurant = inline_serializer(fields={"name": serializers.CharField()})
+        order_id = serializers.CharField()
+        restaurant = inline_serializer(
+            fields={"id": serializers.IntegerField(), "name": serializers.CharField()}
+        )
         status = serializers.CharField()
         total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
         date_created = serializers.DateTimeField()
@@ -108,7 +143,7 @@ class GetOrderDetailsApi(APIView):
             data = self.OrderItemSerializer(order_items, many=True)
             return data.data
 
-    def get(self, request):
+    def post(self, request):
         data = self.InputSerializer(data=request.data)
         if data.is_valid(raise_exception=True):
             order_data = self.OutputSerializer(data.validated_data["order_id"])

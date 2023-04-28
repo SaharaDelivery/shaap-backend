@@ -123,22 +123,34 @@ def place_order(
     Returns:
         Order: The created order object
     """
-    try:
-        order = Order(user=user, restaurant=restaurant)
-        order.full_clean()
-        order.save()
-    except django_exceptions.ValidationError as e:
-        raise rest_exceptions.ValidationError(e)
+    if Order.objects.filter(user=user, restaurant=restaurant, paid=False).exists():
+        try:
+            order_item = OrderItem(order=order, menu_item=menu_item)
+            order_item.full_clean()
+            order_item.save()
+        except django_exceptions.ValidationError as e:
+            raise rest_exceptions.ValidationError(e)
 
-    try:
-        order_item = OrderItem(order=order, menu_item=menu_item)
-        order_item.full_clean()
-        order_item.save()
-    except django_exceptions.ValidationError as e:
-        raise rest_exceptions.ValidationError(e)
+        else:
+            return order
 
     else:
-        return order
+        try:
+            order = Order(user=user, restaurant=restaurant)
+            order.full_clean()
+            order.save()
+        except django_exceptions.ValidationError as e:
+            raise rest_exceptions.ValidationError(e)
+
+        try:
+            order_item = OrderItem(order=order, menu_item=menu_item)
+            order_item.full_clean()
+            order_item.save()
+        except django_exceptions.ValidationError as e:
+            raise rest_exceptions.ValidationError(e)
+
+        else:
+            return order
 
 
 @transaction.atomic
