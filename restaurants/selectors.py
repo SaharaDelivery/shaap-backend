@@ -181,7 +181,7 @@ def get_all_restaurant_menu_items(restaurant_id: int) -> MenuItem:
     else:
         objs = MenuItem.objects.filter(
             menu__restaurant=restaurant, is_active=True
-        ).prefetch_related("menu")
+        ).prefetch_related("menu").order_by("id")
     return objs
 
 

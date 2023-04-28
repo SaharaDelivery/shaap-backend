@@ -318,16 +318,18 @@ class GetAllRestaurantMenuItemsApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         image = serializers.ImageField()
+        menu = serializers.SerializerMethodField()
         name = serializers.CharField()
         description = serializers.CharField()
         price = serializers.DecimalField(max_digits=10, decimal_places=2)
 
+        def get_menu(self, obj):
+            return obj.menu.name
+
     def get(self, request, restaurant_id):
         menu_items = get_all_restaurant_menu_items(restaurant_id=restaurant_id)
-        menus = get_menu_items_with_menu(
-            menu_items=menu_items, serializer=self.OutputSerializer
-        )
-        return Response(status=status.HTTP_200_OK, data=menus)
+        data = self.OutputSerializer(menu_items, many=True)
+        return Response(status=status.HTTP_200_OK, data=data.data)
 
 
 # Not Used
