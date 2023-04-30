@@ -151,7 +151,7 @@ CORS_ALLOW_METHODS = [
 
 # Django Rest Framework Settings
 REST_FRAMEWORK = {
-    "EXCEPTION_HANDLER": "core.exception_handlers.custom_exception_handler",
+    # "EXCEPTION_HANDLER": "core.exception_handlers.custom_exception_handler",
     "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
 }
 

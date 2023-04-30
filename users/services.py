@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.core import exceptions as django_exceptions
 
@@ -159,6 +160,7 @@ def add_order_address(user: CustomUser, data: dict) -> OrderAddress:
 
     Args:
         user (CustomUser): The user object
+        order_id (str): The order id
         data (dict): The address data
 
     Returns:
@@ -248,8 +250,8 @@ def reduce_order_item_quantity(order_item_id: int) -> None:
         None: If the order item is deleted
         OrderItem: if the order item quantity is reduced
     """
-    obj = OrderItem.objects.get(id=order_item_id)
-    if obj.quantity >= 1:
+    obj = get_object_or_404(OrderItem, id=order_item_id)
+    if obj.quantity > 1:
         try:
             obj.quantity -= 1
             obj.full_clean()

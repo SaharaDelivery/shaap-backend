@@ -255,7 +255,7 @@ def get_user_order_history(user: CustomUser) -> Order:
     Returns:
         Order: The Order History sorted on date_created
     """
-    orders = Order.objects.filter(user=user, paid=True, status="delivered").order_by(
+    orders = Order.objects.filter(user=user, paid=True).order_by(
         "-date_created"
     )
     return orders

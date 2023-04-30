@@ -15,7 +15,6 @@ from users.order_apis import (
     DeleteOrderItem,
     EditOrderAddressApi,
     GetAllOrderItemsApi,
-    GetAllOrdersApi,
     GetOrderBasedOnStatus,
     GetOrderDetailsApi,
     GetOrderHistoryApi,
@@ -47,7 +46,6 @@ urlpatterns = [
     #######
     #######
     path("order/place/", PlaceOrderApi.as_view(), name="place-order"),
-    path("orders/get/all/", GetAllOrdersApi.as_view(), name="get-all-orders"),
     path(
         "orders/get/<str:order_status>/",
         GetOrderBasedOnStatus.as_view(),
@@ -72,7 +70,7 @@ urlpatterns = [
     ####
     path("order/item/add/", AddOrderItemApi.as_view(), name="add-order-item"),
     path(
-        "order/item/get/all/<int:order_id>/",
+        "order/item/get/all/<str:order_id>/",
         GetAllOrderItemsApi.as_view(),
         name="get-all-order-item",
     ),

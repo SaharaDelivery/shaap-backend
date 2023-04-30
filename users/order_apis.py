@@ -13,7 +13,7 @@ from restaurants.selectors import (
     get_saved_user_addresses,
     get_user_order_history,
 )
-from users.selectors import get_all_orders
+
 from users.services import (
     add_order_address,
     add_order_item,
@@ -69,27 +69,13 @@ class GetOrderHistoryApi(APIView):
     permission_classes = [IsAuthenticated]
 
     class OutputSerializer(serializers.Serializer):
-        order_id = serializers.IntegerField()
-        restaurant = inline_serializer(fields={"name": serializers.CharField()})
-        total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
-        date_created = serializers.DateTimeField()
-
-    def get(self, request):
-        order_history = get_user_order_history(user=request.user)
-        data = self.OutputSerializer(order_history, many=True)
-        return Response(status=status.HTTP_200_OK, data=data.data)
-
-
-class GetAllOrdersApi(APIView):
-    permission_classes = [IsAuthenticated]
-
-    class OutputSerializer(serializers.Serializer):
         order_id = serializers.CharField()
         restaurant = inline_serializer(
             fields={"id": serializers.IntegerField(), "name": serializers.CharField()}
         )
-        status = serializers.CharField()
         total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
+        date_created = serializers.DateTimeField()
+        order_items = serializers.SerializerMethodField()
         order_items = serializers.SerializerMethodField()
 
         def get_order_items(self, obj):
@@ -107,8 +93,8 @@ class GetAllOrdersApi(APIView):
             quantity = serializers.IntegerField()
 
     def get(self, request):
-        orders = get_all_orders(user=request.user)
-        data = self.OutputSerializer(orders, many=True)
+        order_history = get_user_order_history(user=request.user)
+        data = self.OutputSerializer(order_history, many=True)
         return Response(status=status.HTTP_200_OK, data=data.data)
 
 
@@ -156,7 +142,7 @@ class AddOrderAddressApi(APIView):
 
     class InputSerializer(serializers.Serializer):
         address_1 = serializers.CharField()
-        address_2 = serializers.CharField(required=False)
+        address_2 = serializers.CharField()
         phone_number = serializers.CharField()
         email = serializers.EmailField()
         saved = serializers.BooleanField()
@@ -164,7 +150,7 @@ class AddOrderAddressApi(APIView):
     class OutputSerializer(serializers.Serializer):
         id = serializers.IntegerField()
         address_1 = serializers.CharField()
-        address_2 = serializers.CharField(required=False)
+        address_2 = serializers.CharField()
         phone_number = serializers.CharField()
         email = serializers.EmailField()
         saved = serializers.BooleanField()
@@ -182,6 +168,7 @@ class GetSavedUserOrderAddressApi(APIView):
     permission_classes = [IsAuthenticated]
 
     class OutputSerializer(serializers.Serializer):
+        id = serializers.IntegerField()
         address_1 = serializers.CharField()
         address_2 = serializers.CharField()
         phone_number = serializers.CharField()
