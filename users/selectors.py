@@ -5,7 +5,7 @@ from restaurants.models import Order
 
 def get_existing_user_restaurant_order(user: CustomUser, restaurant_id: int) -> Tuple[Optional[Order], bool]:
     try:
-        order = Order.objects.get(restaurant__id=restaurant_id)
+        order = Order.objects.get(restaurant__id=restaurant_id, paid=False, user=user)
     except Order.DoesNotExist:
         return None, False
     
