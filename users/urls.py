@@ -57,7 +57,7 @@ urlpatterns = [
         GetExistingUserRestaurantOrderApi.as_view(),
         name="get-existing-user-restaurant-order",
     ),
-    path("order/details/", GetOrderDetailsApi.as_view(), name="get-order-details"),
+    path("order/details/<str:order_id>/", GetOrderDetailsApi.as_view(), name="get-order-details"),
     path("order/history/", GetOrderHistoryApi.as_view(), name="get-order-history"),
     ####
     ####

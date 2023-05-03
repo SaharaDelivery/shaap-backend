@@ -13,7 +13,7 @@ from restaurants.selectors import (
     get_saved_user_addresses,
     get_user_order_history,
 )
-from users.selectors import get_existing_user_restaurant_order
+from users.selectors import get_existing_user_restaurant_order, get_user_order
 
 from users.services import (
     add_order_address,
@@ -118,9 +118,6 @@ class GetExistingUserRestaurantOrderApi(APIView):
 class GetOrderDetailsApi(APIView):
     permission_classes = [IsAuthenticated]
 
-    class InputSerializer(serializers.Serializer):
-        order_id = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all())
-
     class OutputSerializer(serializers.Serializer):
         order_id = serializers.CharField()
         restaurant = inline_serializer(
@@ -145,12 +142,10 @@ class GetOrderDetailsApi(APIView):
             data = self.OrderItemSerializer(order_items, many=True)
             return data.data
 
-    def post(self, request):
-        data = self.InputSerializer(data=request.data)
-        if data.is_valid(raise_exception=True):
-            order_data = self.OutputSerializer(data.validated_data["order_id"])
-            return Response(status=status.HTTP_200_OK, data=order_data.data)
-        return Response(status=status.HTTP_400_BAD_REQUEST, data=data.errors)
+    def get(self, request, order_id):
+        order = get_user_order(order_id=order_id, user=request.user)
+        data = self.OutputSerializer(order)
+        return Response(status=status.HTTP_200_OK, data=data.data)
 
 
 class AddOrderAddressApi(APIView):
