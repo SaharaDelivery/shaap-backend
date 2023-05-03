@@ -132,6 +132,7 @@ class GetOrderDetailsApi(APIView):
             menu_item = inline_serializer(
                 fields={
                     "name": serializers.CharField(),
+                    "image": serializers.ImageField(),
                     "price": serializers.DecimalField(max_digits=10, decimal_places=2),
                 }
             )
