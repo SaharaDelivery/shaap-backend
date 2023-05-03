@@ -125,15 +125,7 @@ def place_order(
         Order: The created order object
     """
     if Order.objects.filter(user=user, restaurant=restaurant, paid=False).exists():
-        try:
-            order_item = OrderItem(order=order, menu_item=menu_item)
-            order_item.full_clean()
-            order_item.save()
-        except django_exceptions.ValidationError as e:
-            raise rest_exceptions.ValidationError(e)
-
-        else:
-            return order
+        return Order.objects.get(user=user, restaurant=restaurant, paid=False)
 
     else:
         try:

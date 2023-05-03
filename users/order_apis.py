@@ -13,6 +13,7 @@ from restaurants.selectors import (
     get_saved_user_addresses,
     get_user_order_history,
 )
+from users.selectors import get_existing_user_restaurant_order
 
 from users.services import (
     add_order_address,
@@ -96,6 +97,21 @@ class GetOrderHistoryApi(APIView):
         order_history = get_user_order_history(user=request.user)
         data = self.OutputSerializer(order_history, many=True)
         return Response(status=status.HTTP_200_OK, data=data.data)
+
+
+class GetExistingUserRestaurantOrderApi(APIView):
+    def get(self, request, restaurant_id):
+        order, exists = get_existing_user_restaurant_order(
+            user=request.user, restaurant_id=restaurant_id
+        )
+        if exists:
+            return Response(
+                status=status.HTTP_200_OK, data={"order_id": order.order_id}
+            )
+        else:
+            return Response(
+                status=status.HTTP_404_NOT_FOUND, data={"error": "No Order Exists"}
+            )
 
 
 # NOTE: Needs further review
