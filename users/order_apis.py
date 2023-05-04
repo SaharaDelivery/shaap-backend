@@ -75,6 +75,7 @@ class GetOrderHistoryApi(APIView):
             fields={"id": serializers.IntegerField(), "name": serializers.CharField()}
         )
         total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
+        status = serializers.CharField()
         date_created = serializers.DateTimeField()
         order_items = serializers.SerializerMethodField()
         order_items = serializers.SerializerMethodField()
@@ -88,6 +89,7 @@ class GetOrderHistoryApi(APIView):
             menu_item = inline_serializer(
                 fields={
                     "name": serializers.CharField(),
+                    "image": serializers.ImageField(),
                     "price": serializers.DecimalField(max_digits=10, decimal_places=2),
                 }
             )
