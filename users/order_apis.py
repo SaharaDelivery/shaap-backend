@@ -53,7 +53,7 @@ class GetOrderBasedOnStatus(APIView):
     permission_classes = [IsAuthenticated]
 
     class OutputSerializer(serializers.Serializer):
-        order_id = serializers.IntegerField()
+        order_id = serializers.CharField()
         restaurant = inline_serializer(fields={"name": serializers.CharField()})
         status = serializers.CharField()
         total_price = serializers.DecimalField(max_digits=10, decimal_places=2)
@@ -88,6 +88,7 @@ class GetOrderHistoryApi(APIView):
         class OrderItemSerializer(serializers.Serializer):
             menu_item = inline_serializer(
                 fields={
+                    "id": serializers.IntegerField(),
                     "name": serializers.CharField(),
                     "image": serializers.ImageField(),
                     "price": serializers.DecimalField(max_digits=10, decimal_places=2),
@@ -133,6 +134,7 @@ class GetOrderDetailsApi(APIView):
         class OrderItemSerializer(serializers.Serializer):
             menu_item = inline_serializer(
                 fields={
+                    "id": serializers.IntegerField(),
                     "name": serializers.CharField(),
                     "image": serializers.ImageField(),
                     "price": serializers.DecimalField(max_digits=10, decimal_places=2),
@@ -243,10 +245,12 @@ class GetAllOrderItemsApi(APIView):
     permission_classes = [IsAuthenticated]
 
     class OutputSerializer(serializers.Serializer):
-        id = serializers.IntegerField()
+        order_id = serializers.CharField()
         menu_item = inline_serializer(
             fields={
+                "id": serializers.IntegerField(),
                 "name": serializers.CharField(),
+                "image": serializers.ImageField(),
                 "price": serializers.DecimalField(max_digits=10, decimal_places=2),
             }
         )
