@@ -246,9 +246,9 @@ class GetAllOrderItemsApi(APIView):
 
     class OutputSerializer(serializers.Serializer):
         order_id = serializers.CharField()
+        id = serializers.IntegerField()
         menu_item = inline_serializer(
             fields={
-                "id": serializers.IntegerField(),
                 "name": serializers.CharField(),
                 "image": serializers.ImageField(),
                 "price": serializers.DecimalField(max_digits=10, decimal_places=2),
